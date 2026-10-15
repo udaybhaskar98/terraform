@@ -131,7 +131,7 @@ resource "aws_instance" "rhel-9-instance" {
   #count = 2 #meta argument
   for_each = tomap({
     rhel-instance-1 = "t3.micro"
-    rhel-instance-2 = "t3.micro"
+    # rhel-instance-2 = "t3.micro"
     
   })
 

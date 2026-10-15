@@ -1,6 +1,6 @@
-resource "aws_s3_bucket" "bucket_res" {
-  bucket = "demo-buck3t-tf2"
-}
+# resource "aws_s3_bucket" "bucket_res" {
+#   bucket = "demo-buck3t-tf2"
+# }
 
 # import {
 #   to = aws_s3_bucket.bucket_res

@@ -1,0 +1,6 @@
+.terraform/
+provider.tf
+terra-key-ec2
+terra-key-ec2.pub
+*.tfstate
+*.tfstate.*

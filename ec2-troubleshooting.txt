@@ -1,0 +1,60 @@
+# Terraform EC2 SSH Troubleshooting — Revision Notes
+
+### Problems encountered and solutions
+
+1. **Security group ID error**
+   - Problem: Used the security group name instead of its ID.
+   - Fix: Use `vpc_security_group_ids = [aws_security_group.sg-main.id]`.
+
+2. **Security group and subnet mismatch**
+   - Problem: EC2 used a subnet from a different VPC than the security group.
+   - Fix: Created a subnet in the custom VPC and specified `subnet_id = aws_subnet.public.id`.
+
+3. **SSH key has no `.pem` extension**
+   - Problem: Key was generated using `ssh-keygen` without a `.pem` extension.
+   - Fix: No extension is required. Use the private key with `ssh -i terra-key-ec2 ...` and set permissions using `chmod 400 terra-key-ec2`.
+
+4. **SSH connection timed out**
+   - Error: `Operation timed out` on port 22.
+   - Cause: The VPC route table initially had only `10.0.0.0/16 → local`, with no internet route.
+   - Fix: Added:
+     - Internet Gateway
+     - Public route table with `0.0.0.0/0 → Internet Gateway`
+     - Route table association with the public subnet
+
+### Important commands
+
+```bash
+terraform fmt       # Format Terraform files
+terraform validate  # Validate configuration
+terraform plan      # Preview changes
+terraform apply     # Apply planned changes
+```
+
+### Key concepts
+
+- `terraform plan` shows what Terraform will create, update, replace, or destroy.
+- `terraform apply` normally changes only what is needed according to the configuration and state.
+- Don't run `terraform destroy` just to add resources.
+- A public subnet needs an Internet Gateway route and an associated route table. The EC2 instance also needs a public IP and SSH allowed in its security group.
+- Use `ssh -vvv -o ConnectTimeout=10` to troubleshoot SSH connection failures.
+
+**SSH command for RHEL 9:**
+
+```bash
+ssh -i terra-key-ec2 ec2-user@<PUBLIC_IP>
+```
+
+Note: After applying the networking changes, verify that SSH works; the timeout error alone does not prove the connection is fixed.
+
+> When a terraform apply execution freezes "stil creating"
+ctrl + c to interrupt the execution..
+TF_LOG=DEBUG terraform apply 2>&1 | tee terraform-debug.log
+
+This command runs terraform apply with debug logging enabled and saves all output to a file called terraform-debug.log
+
+2>&1	Redirects error output (stderr, file descriptor 2) into normal output (stdout, file descriptor 1).
+
+also 
+to search for errors do This
+grep -iE 'error|failed' terraform-debug.log

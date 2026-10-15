@@ -29,6 +29,6 @@ variable "ec2_assign_pub_ip" {
 }
 
 variable "env" {
-    default = "dev"
+    default = "prod"
     type = string
 }

@@ -1,7 +1,7 @@
 # key pair
 
 resource "aws_key_pair" "my_key" {
-  key_name   = "terra-key-ec2"
+  key_name   = "${var.env}-terra-key-ec2"
   public_key = file("terra-key-ec2.pub")
 }
 
@@ -131,7 +131,7 @@ resource "aws_instance" "rhel-9-instance" {
   #count = 2 #meta argument
   for_each = tomap({
     rhel-instance-1 = "t3.micro"
-    rhel-instance-2 = "t3.micro"
+    # rhel-instance-2 = "t3.micro"
     
   })
 

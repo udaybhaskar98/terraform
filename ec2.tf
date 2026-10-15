@@ -66,6 +66,7 @@ resource "aws_security_group" "sg-main" {
 
   tags = {
     Name = "sg-main"
+    Environment = var.env
   }
 
   # Inbound Rules
@@ -131,9 +132,7 @@ resource "aws_instance" "rhel-9-instance" {
   for_each = tomap({
     rhel-instance-1 = "t3.micro"
     rhel-instance-2 = "t3.micro"
-    rhel-instance-3 = "t3.small"
-    rhel-instance-4 = "t3.small"
-    rhel-instance-5 = "t3.small"
+    
   })
 
   depends_on = [ aws_security_group.sg-main, aws_key_pair.my_key ]
@@ -157,6 +156,7 @@ resource "aws_instance" "rhel-9-instance" {
 
   tags = {
     Name = each.key
+    Environment = var.env
   }
 }
 
